@@ -53,7 +53,7 @@ let N = Math.floor(new Date().getTime() / (ts * 1000));
 ## N 16진수 변환
 
 ```js js
-let N_hex = ("000000000000000" + N.toString(16)).substr(-16); // 16자리가 되도록 앞에 0 패딩추가
+let N_hex = ('000000000000000' + N.toString(16)).substr(-16); // 16자리가 되도록 앞에 0 패딩추가
 ```
 
 - N을 16진수로 변환하는데 16자리가 되도록 처리
@@ -69,9 +69,10 @@ let m = Buffer.from(N_hex);
 ## K 생성하기 (K : 공유키)
 
 ```js js
-const base32 = require("base32"); // base32 모듈 임포트
+const base32 = require('base32'); // base32 모듈 임포트
+const { randomBytes } = require('crypto');
 
-const random12 = `${Math.random() * Math.pow(10, 20)}`.substring(0, 12); // 12자리 랜덤숫자 생성
+const random12 = randomBytes(12 / 2).toString('hex'); // 12자리 랜덤 문자열 생성
 
 const K = base32.encode(random12);
 ```
@@ -83,9 +84,9 @@ const K = base32.encode(random12);
 ## HMAC hash 얻기
 
 ```js js
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-let hmac_hash = crypto.createHmac("sha1", K).update(m).digest("hex");
+let hmac_hash = crypto.createHmac('sha1', K).update(m).digest('hex');
 ```
 
 - 내장 모듈 crypto 에서 hmac hash를 얻을 수 있다.
@@ -97,15 +98,15 @@ const offset = parseInt(Number(`0x${hmac_hash[hmac_hash.length - 1]}`), 10);
 
 // offset으로부터 4개 바이트 변환
 const token_hex_4bytes = hmac_hash.substring(offset * 2, offset * 2 + 4 * 2);
-let toekn_hex = "";
+let toekn_hex = '';
 
 toekn_hex += (
-  "00" + (Number(`0x${token_hex_4bytes.substring(0, 2)}`) & 0x7f).toString(16)
+  '00' + (Number(`0x${token_hex_4bytes.substring(0, 2)}`) & 0x7f).toString(16)
 ).substr(-2);
 
 for (let index = 2; index < token_hex_4bytes.length; index += 2) {
   const element = token_hex_4bytes.substring(index, index + 2);
-  toekn_hex += ("00" + (Number(`0x${element}`) & 0xff).toString(16)).substr(-2);
+  toekn_hex += ('00' + (Number(`0x${element}`) & 0xff).toString(16)).substr(-2);
 }
 
 const token = Number(`0x${toekn_hex}`).toString().substr(-6);
