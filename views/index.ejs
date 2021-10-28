@@ -9,8 +9,8 @@
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
     <form action="/login" method="POST" name="myForm">
-      <input type="text" name="input_key" value="<%= key %>" />
-      <input type="text" name="input_otp" placeholder="123456" />
+      <input type="text" name="inputKey" value="<%= key %>" />
+      <input type="text" name="inputOtp" placeholder="123456" />
       <input type="button" onclick="login()" value="login" />
     </form>
     <button ty onclick="getotp()">getotp</button>
