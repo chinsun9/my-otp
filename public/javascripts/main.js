@@ -1,4 +1,4 @@
-const time_HTMLelement = document.querySelector('#time');
+/* eslint-disable no-unused-vars */
 
 function genkey() {
   const fetchResponsePromise = fetch('/genkey');
@@ -29,8 +29,8 @@ function login() {
     redirect: 'follow', // manual, *follow, error
     referrer: 'no-referrer', // no-referrer, *client
     body: JSON.stringify({
-      input_key: document.myForm.input_key.value,
-      input_otp: document.myForm.input_otp.value,
+      inputKey: document.myForm.inputKey.value,
+      inputOtp: document.myForm.inputOtp.value,
     }), // body data type must match "Content-Type" header
   });
   fetchResponsePromise
@@ -48,6 +48,10 @@ function login() {
     });
 }
 
+function padZeros(num, digit) {
+  return `${num}`.padStart(digit, '0');
+}
+
 function getotp() {
   const fetchResponsePromise = fetch('/otp', {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -59,7 +63,7 @@ function getotp() {
     },
     redirect: 'follow', // manual, *follow, error
     referrer: 'no-referrer', // no-referrer, *client
-    body: JSON.stringify({ input_key: document.myForm.input_key.value }), // body data type must match "Content-Type" header
+    body: JSON.stringify({ inputKey: document.myForm.inputKey.value }),
   });
   fetchResponsePromise
     .then((response) => {
@@ -77,49 +81,18 @@ function getotp() {
 }
 
 function printClock() {
-  const clock = time_HTMLelement; // 출력할 장소 선택
   const currentDate = new Date(); // 현재시간
-  const calendar = `${currentDate.getFullYear()
-  }-${
-    currentDate.getMonth() + 1
-  }-${
-    currentDate.getDate()}`; // 현재 날짜
-  let amPm = 'AM'; // 초기값 AM
-  let currentHours = addZeros(currentDate.getHours(), 2);
-  const currentMinute = addZeros(currentDate.getMinutes(), 2);
-  let currentSeconds = addZeros(currentDate.getSeconds(), 2);
 
-  if (currentHours >= 12) {
-    // 시간이 12보다 클 때 PM으로 세팅, 12를 빼줌
-    amPm = 'PM';
-    currentHours = addZeros(currentHours - 12, 2);
-  }
+  const curHours = currentDate.getHours();
+  const curSeconds = currentDate.getSeconds();
+  const amPm = curHours >= 12 ? 'PM' : 'AM';
+  const currentHours = padZeros(curHours >= 12 ? curHours - 12 : curHours, 2);
+  const currentMinute = padZeros(currentDate.getMinutes(), 2);
+  const currentSeconds = curSeconds >= 50 ? `<span style="color:#de1951;">${padZeros(curSeconds, 2)}</span>` : padZeros(curSeconds, 2);
 
-  if (currentSeconds >= 50) {
-    // 50초 이상일 때 색을 변환해 준다.
-    currentSeconds = `<span style="color:#de1951;">${currentSeconds}</span>`;
-  }
-  clock.innerHTML = `${currentHours
-  }:${
-    currentMinute
-  }:${
-    currentSeconds
-  } <span style='font-size:50px;'>${
-    amPm
-  }</span>`; // 날짜를 출력해 줌
-
-  setTimeout('printClock()', 1000); // 1초마다 printClock() 함수 호출
+  document.querySelector('#time').innerHTML = `${currentHours}:${currentMinute}:${currentSeconds} <span style='font-size:50px;'>${amPm}</span>`;
 }
+
 printClock();
 
-function addZeros(num, digit) {
-  // 자릿수 맞춰주기
-  let zero = '';
-  num = num.toString();
-  if (num.length < digit) {
-    for (i = 0; i < digit - num.length; i++) {
-      zero += '0';
-    }
-  }
-  return zero + num;
-}
+setInterval(printClock, 1000);
