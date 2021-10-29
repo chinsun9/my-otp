@@ -1,9 +1,8 @@
 const express = require('express');
-
-const router = express.Router();
-
 const { genSharedKey } = require('./utils/genSharedKey');
 const { getToken } = require('./utils/getToken');
+
+const router = express.Router();
 
 const key = genSharedKey();
 
@@ -29,14 +28,8 @@ router.get('/genkey', (req, res) => {
 router.post('/login', (req, res) => {
   console.info(new Date());
   const { inputKey, inputOtp } = req.body;
-  let loginResult = false;
-
-  if (
-    inputOtp == getToken(inputKey)
-    || inputOtp == getToken(inputKey, true)
-  ) {
-    loginResult = true;
-  }
+  const loginResult = inputOtp === getToken(inputKey)
+  || inputOtp === getToken(inputKey, true);
 
   res.json(loginResult);
 });
