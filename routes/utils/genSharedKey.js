@@ -1,5 +1,5 @@
 const base32 = require('base32');
-const { randomBytes } = require('crypto')
+const { randomBytes } = require('crypto');
 
 function genSharedKey() {
   const random12 = randomBytes(12 / 2).toString('hex');
